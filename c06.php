@@ -13,7 +13,7 @@
         th{
             background-color: yellow;
         }
-        tr:nth-child(3n){
+        tr:nth-child(3n-1){
             background-color: lightgreen;
         }
     </style>
