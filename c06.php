@@ -19,7 +19,32 @@
     </style>
 </head>
 <body>
+    <h3>Dodaj uzytkownika:</h3>
+    <form action="c06.php" method="post">
+        <input type="text" placeholder="login" name="login">
+        <input type="text" placeholder="haslo" name="haslo">
+        <input type="submit" value="dodaj">
+    </form>
     <?php
+        function dodajUzytkownika()
+        {
+            if(isset($_POST['login']))
+            {
+                $link = mysqli_connect('localhost');
+            }
+        }
+        function czyIstnieje($link, $login)
+        {
+            $query = "SELECT $login FROM osoby";
+            try{
+                mysqli_query($link, $query);
+                return true;
+            }
+            catch{
+                return false;
+            }
+            
+        }
         function wyswietl($db, $nazwaTabeli)
         {
             $query = "SELECT * FROM $nazwaTabeli";
@@ -39,6 +64,7 @@
         }
         $link = mysqli_connect('localhost', 'root', '', '4ag1gra');
         wyswietl($link, 'osoby');
+        echo czyIstnieje($link, 'marek');
     ?>
 </body>
 </html>
