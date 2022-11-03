@@ -15,26 +15,26 @@
     <div id="main">
         <div id="left">
             <h3>Filtry:</h3>
-            <form action="">
-                od: <input type="range" id="od_range"><br>
-                do: <input type="range" id="do_range"><br>
-                <input type="number" id="od">
-                <input type="number" id="do"><br>
-                <select name="" id="lista">
+            <form action="index.php" method="get">
+                od: <input type="range" id="od_range"  min="0" max="100000" value="<?php echo $_GET['od']; ?>"><br>
+                do: <input type="range" id="do_range" min="0" max="100000" value="<?php echo $_GET['do']; ?>"><br>
+                <input type="number" id="od" readonly="readonly" name="od" value="<?php echo $_GET['od']; ?>">
+                <input type="number" id="do" readonly="readonly" name="do" value="<?php echo $_GET['do']; ?>"><br>
+                <select name="marka" id="lista">
                     <option value=""></option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="volkswagen">Volkswagen</option>
-                    <option value="opel">Opel</option>
-                    <option value="tesla">Tesla</option>
-                    <option value="audi">Audi</option>
+                    <option value="Mercedes">Mercedes</option>
+                    <option value="Volkswagen">Volkswagen</option>
+                    <option value="Opel">Opel</option>
+                    <option value="Tesla">Tesla</option>
+                    <option value="Audi">Audi</option>
                 </select>
-
+                <input type="submit">
             </form>
         </div>
         <div id="right">
             <?php
                 $link = mysqli_connect('localhost', 'root', '', 'komissamochodowy');
-                function dane($link)
+                function daneDoBazy($link)
                 {
                     $plik = fopen('dane.txt', 'r');
                     while(!feof($plik))
@@ -43,16 +43,48 @@
                         $arr = explode('|', $linia);
                         $query = "INSERT INTO auta (id, rok, marka, model, cena) VALUES (NULL, '$arr[0]', '$arr[1]', '$arr[2]', '$arr[3]')";
                         var_dump($arr);
-                        // $istnieje = mysqli_query($link, "SELECT id FROM auta");
-                        // if()
-                        // mysqli_query($link, $query);
-                        
+                        mysqli_query($link, $query);
                     }
                     
-                }
-                dane($link);
-                
+                }   
             ?>
+            Wybrane: <br>
+            Marka: <span id="wyb_marka"></span><br>
+            Cena od: <span id="wyb_od"></span> do: <span id="wyb_do"></span><br>
+
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>marka</th>
+                    <th>model</th>
+                    <th>rok</th>
+                    <th>cena</th>
+                </tr>
+                <?php   
+                    $Q = "SELECT * FROM auta";
+                    if(isset($_GET['od'])){
+                        $od = $_GET['od'];
+                        $do = $_GET['do'];
+                        $Q = "SELECT * FROM auta WHERE cena BETWEEN $od AND $do";
+                        if($_GET['marka'] != '')
+                        {
+                            $marka = $_GET['marka'];
+                            $Q = "SELECT * FROM auta where cena BETWEEN $od AND $do AND marka='$marka'";                           
+                        }
+                    }                    
+                    $wynik = mysqli_query($link, $Q);
+                    foreach($wynik as $row)
+                    {
+                        echo '<tr>';
+                            echo '<td>'.$row['id'].'</td>';
+                            echo '<td>'.$row['marka'].'</td>';
+                            echo '<td>'.$row['model'].'</td>';
+                            echo '<td>'.$row['rok'].'</td>';
+                            echo '<td>'.$row['cena'].'</td>';
+                        echo '</tr>';
+                    }
+                ?>
+            </table>
         </div>
     </div>
     <footer>
@@ -60,6 +92,6 @@
     </footer>
 
 
-    <script src="js/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
